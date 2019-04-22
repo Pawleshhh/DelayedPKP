@@ -67,6 +67,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\Boards\InfoBoardViewModel.cs" />
+    <Compile Include="ViewModel\Boards\StationBoardViewModel.cs" />
+    <Compile Include="ViewModel\Data\DelayInfoViewModel.cs" />
+    <Compile Include="ViewModel\Data\IDelayInfoViewModel.cs" />
+    <Compile Include="ViewModel\Data\IDelayInfoViewModelBase.cs" />
+    <Compile Include="ViewModel\Data\StationViewModel.cs" />
+    <Compile Include="ViewModel\Data\TrainViewModel.cs" />
+    <Compile Include="ViewModel\ErrorViewModel.cs" />
+    <Compile Include="ViewModel\Helper classes\ObservedClass.cs" />
+    <Compile Include="ViewModel\Helper classes\RelayCommand.cs" />
+    <Compile Include="ViewModel\IViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -129,7 +141,6 @@
     <Folder Include="Pages\" />
     <Folder Include="Resource dictionaries\" />
     <Folder Include="Value Converters\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />

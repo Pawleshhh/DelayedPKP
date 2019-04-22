@@ -73,6 +73,7 @@ namespace DelayedPKP.Model
         /// <exception cref="NodeAttributeNotFoundException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
         /// <exception cref="WebException"/>
+        /// <exception cref="ArgumentException"/>
         public IEnumerable<Station> GetStations(string station)
         {
             //Get html document of the stations
