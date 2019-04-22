@@ -47,28 +47,30 @@ namespace DelayedPKP.Model
         /// <summary>
         /// Gets and sets time of the planned arrival
         /// </summary>
-        TimeSpan PlannedArrival { get; set; }
+        TimeSpan? PlannedArrival { get; set; }
 
         /// <summary>
         /// Gets and sets delay time
         /// </summary>
-        TimeSpan ArrivalDelay { get; set; }
+        TimeSpan? ArrivalDelay { get; set; }
 
         /// <summary>
         /// Gets and sets planned departure of this train.
         /// </summary>
-        TimeSpan PlannedDeparture { get; set; }
+        TimeSpan? PlannedDeparture { get; set; }
 
         /// <summary>
         /// Gets and sets departure delay of this train.
         /// </summary>
-        TimeSpan DepartureDelay { get; set; }
+        TimeSpan? DepartureDelay { get; set; }
 
     }
 
+    [Flags]
     public enum DelayLevel
     {
-        Minus = -1, Zero, Low, Medium, High
+        MinusArrival = 0, MinusDeparture = 1, ZeroArrival = 2, ZeroDeparture = 4, LowArrival = 8, LowDeparture = 16,
+        MediumArrival = 32, MediumDeparture = 64, HighArrival = 128, HighDeparture = 258
     }
 
 }

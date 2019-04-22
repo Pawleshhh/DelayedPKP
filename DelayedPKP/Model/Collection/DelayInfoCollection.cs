@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace DelayedPKP.Model
 {
+
+    /// <summary>
+    /// Collection of Delay Info.
+    /// </summary>
     public class DelayInfoCollection<TBy, TDelayData> : IList<TDelayData>, IReadOnlyList<TDelayData>
         where TDelayData : IDelayInfo<TBy>
         where TBy : IEquatable<TBy>, IComparable<TBy>

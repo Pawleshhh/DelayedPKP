@@ -134,7 +134,7 @@ namespace DelayedPKP.Model
             //Helper variables
             string trainName = string.Empty, id = string.Empty, host = string.Empty, from = string.Empty, destination = string.Empty;
             DateTime date = default;
-            TimeSpan planned = default, delay = default;
+            TimeSpan? planned = default, delay = null;
 
             Action<HtmlNodeCollection> setVariables = cells =>
             {
@@ -144,7 +144,7 @@ namespace DelayedPKP.Model
                 host = ClearInnerText(cells[1].InnerText);
                 date = GetDateTimeFromText(cells[2].InnerText, "yyyy-M-d");
                 from = GetRelationsFromText(cells[3].InnerText, out destination);
-                planned = TimeSpan.Parse(ClearInnerText(cells[4].InnerText));
+                TryGetPlannedTimeFromText(cells[4].InnerText, out planned);
                 TryGetDelayTimeFromText(cells[5].InnerText, out delay);
             };
 
@@ -199,7 +199,7 @@ namespace DelayedPKP.Model
             //Helper variables
             string stationName, stationID, from, destination;
             DateTime date;
-            TimeSpan plannedArrival, arrivalDelay, plannedDeparture, departureDelay;
+            TimeSpan? plannedArrival, plannedDeparture, arrivalDelay, departureDelay;
 
             //Make function that will set data from the table.
             Func<HtmlNodeCollection, IDelayInfo<Train>> setData = cells =>
@@ -212,10 +212,10 @@ namespace DelayedPKP.Model
 
                 from = GetRelationsFromText(cells[2].InnerText, out destination);
 
-                TimeSpan.TryParse(ClearInnerText(cells[4].InnerText), out plannedArrival);
+                TryGetPlannedTimeFromText(cells[4].InnerText, out plannedArrival);
                 TryGetDelayTimeFromText(cells[5].InnerText, out arrivalDelay);
 
-                TimeSpan.TryParse(ClearInnerText(cells[6].InnerText), out plannedDeparture);
+                TryGetPlannedTimeFromText(cells[4].InnerText, out plannedDeparture);
                 TryGetDelayTimeFromText(cells[7].InnerText, out departureDelay);
 
                 //Return delay info by given variables
@@ -434,11 +434,30 @@ namespace DelayedPKP.Model
         }
 
         /// <summary>
+        /// Helper method to get planned time from text.
+        /// </summary>
+        /// <param name="text">Text that contains planned time.</param>
+        public bool TryGetPlannedTimeFromText(string text, out TimeSpan? timeSpan)
+        {
+            try
+            {
+                TimeSpan temp = TimeSpan.Parse(ClearInnerText(text));
+
+                timeSpan = temp;
+            }
+            catch
+            {
+                timeSpan = null; return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Helper method to get delay time from text.
         /// </summary>
         /// <param name="text">Text that contains delay time.</param>
-        /// <returns></returns>
-        private bool TryGetDelayTimeFromText(string text, out TimeSpan timeSpan)
+        private bool TryGetDelayTimeFromText(string text, out TimeSpan? timeSpan)
         {
             try
             {
@@ -451,7 +470,7 @@ namespace DelayedPKP.Model
 
                 timeSpan = TimeSpan.FromMinutes(min);
             }
-            catch { timeSpan = default; return false; }
+            catch { timeSpan = null; return false; }
 
             return true;
         }

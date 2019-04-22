@@ -59,44 +59,76 @@ namespace DelayedPKP.Model
         {
             get
             {
-                if (ArrivalDelay.TotalMinutes < 0 || DepartureDelay.TotalMinutes < 0)
-                    return DelayLevel.Minus;
-                else if ((ArrivalDelay.TotalMinutes > 0 && ArrivalDelay.TotalMinutes < 20) ||
-                          (DepartureDelay.TotalMinutes > 0 && DepartureDelay.TotalMinutes < 20))
-                    return DelayLevel.Low;
-                else if ((ArrivalDelay.TotalMinutes >= 20 && ArrivalDelay.TotalMinutes < 60) ||
-                         (DepartureDelay.TotalMinutes >= 20 && DepartureDelay.TotalMinutes < 60))
-                    return DelayLevel.Medium;
-                else if (ArrivalDelay.TotalMinutes >= 60 || DepartureDelay.TotalMinutes >= 60)
-                    return DelayLevel.High;
-                else
-                    return DelayLevel.Zero;
+                double arrival = ArrivalDelay.Value.TotalMinutes;
+                double departure = DepartureDelay.Value.TotalMinutes;
+
+                return GetArrivalDelayLevel(arrival) | GetDepartureDelayLevel(departure);
             }
         }
 
         /// <summary>
         /// Gets and sets time of the planned arrival
         /// </summary>
-        public TimeSpan PlannedArrival { get; set; }
+        public TimeSpan? PlannedArrival { get; set; }
 
         /// <summary>
         /// Gets and sets delay time
         /// </summary>
-        public TimeSpan ArrivalDelay { get; set; }
+        public TimeSpan? ArrivalDelay { get; set; }
 
         /// <summary>
         /// Gets and sets planned departure of this train.
         /// </summary>
-        public TimeSpan PlannedDeparture { get; set; }
+        public TimeSpan? PlannedDeparture { get; set; }
 
         /// <summary>
         /// Gets and sets departure delay of this train.
         /// </summary>
-        public TimeSpan DepartureDelay { get; set; }
+        public TimeSpan? DepartureDelay { get; set; }
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Helper method to indicate delay level of the arrival.
+        /// </summary>
+        /// <param name="arrival">The delay time of the arrival</param>
+        /// <returns></returns>
+        private DelayLevel GetArrivalDelayLevel(double arrival)
+        {
+            if (arrival < 0) return DelayLevel.MinusArrival;
+
+            if (arrival == 0) return DelayLevel.ZeroArrival;
+
+            if (arrival > 0 && arrival < 20) return DelayLevel.LowArrival;
+
+            if (arrival >= 20 && arrival < 60) return DelayLevel.MediumArrival;
+
+            if (arrival >= 60) return DelayLevel.HighArrival;
+
+            throw new ArgumentException("Arrival time is not recognized.", "arrival");
+        }
+
+        /// <summary>
+        /// Helper method to indicate delay level of the departure.
+        /// </summary>
+        /// <param name="arrival">The delay time of the departure</param>
+        /// <returns></returns>
+        private DelayLevel GetDepartureDelayLevel(double departure)
+        {
+            if (departure < 0) return DelayLevel.MinusArrival;
+
+            if (departure == 0) return DelayLevel.ZeroDeparture;
+
+            if (departure > 0 && departure < 20) return DelayLevel.LowArrival;
+
+            if (departure >= 20 && departure < 60) return DelayLevel.MediumArrival;
+
+            if (departure >= 60) return DelayLevel.HighArrival;
+
+            throw new ArgumentException("Departure time is not recognized.", "departure");
+        }
 
         #endregion
 
@@ -122,7 +154,8 @@ namespace DelayedPKP.Model
         {
             if (Equals(other)) return 0;
 
-            if (Date == other.Date) return PlannedArrival.CompareTo(other.PlannedArrival);
+            if (Date == other.Date && PlannedArrival != null) return PlannedArrival.Value.CompareTo(other.PlannedArrival);
+            else if (Date == other.Date && PlannedDeparture != null) return PlannedDeparture.Value.CompareTo(other.PlannedDeparture);
             else return Date.CompareTo(other.Date);
         }
 
@@ -144,8 +177,7 @@ namespace DelayedPKP.Model
 
         public override string ToString()
         {
-            return $"{Date.ToString("dd-MM-yyyy")}|{Relation}|{Station}|{PlannedArrival}|" +
-                $"{ArrivalDelay.TotalMinutes} min|{PlannedDeparture}|{DepartureDelay.TotalMinutes} min";
+            return "Delay time of the " + Train.ToString();
         }
 
         #endregion
@@ -156,8 +188,8 @@ namespace DelayedPKP.Model
         /// Gets new delay info by given variables.
         /// </summary>
         public static IDelayInfo<TBy> GetSingleDelayInfo(TBy byData, Train train, Station station, string from, string destination,
-                                                        DateTime date, TimeSpan plannedArr, TimeSpan arrDelay,
-                                                        TimeSpan plannedDepar, TimeSpan deparDelay)
+                                                        DateTime date, TimeSpan? plannedArr, TimeSpan? arrDelay,
+                                                        TimeSpan? plannedDepar, TimeSpan? deparDelay)
         {
             return new DelayInfo<TBy>()
             {
