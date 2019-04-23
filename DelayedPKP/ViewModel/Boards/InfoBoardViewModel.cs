@@ -9,12 +9,12 @@ namespace DelayedPKP.ViewModel
     using DelayedPKP.Model;
     using System.Collections.ObjectModel;
 
-    public class InfoBoardViewModel<TBy> : ObservedClass where TBy : IEquatable<TBy>, IComparable<TBy>
+    public class InfoBoardViewModel<TBy> : ObservedClass, IViewModel where TBy : IEquatable<TBy>, IComparable<TBy>
     {
 
         #region Constructors
 
-        public InfoBoardViewModel() { }
+        public InfoBoardViewModel(IViewModel parent) { ParentViewModel = parent; }
 
         public InfoBoardViewModel(IEnumerable<IDelayInfo<TBy>> collection)
         {
@@ -39,6 +39,10 @@ namespace DelayedPKP.ViewModel
         public TBy ByData => delayColl.ByData;
 
         public ObservableCollection<IDelayInfoViewModel<TBy>> Collection { get; private set; }
+
+        public IViewModel ParentViewModel { get; private set; }
+
+        public ErrorViewModel ErrorViewModel => ParentViewModel.ErrorViewModel ?? null;
 
         #endregion
 

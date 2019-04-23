@@ -8,7 +8,7 @@ namespace DelayedPKP.ViewModel
 {
     using Model;
 
-    public class StationViewModel : ObservedClass, 
+    public class StationViewModel : ObservedClass,
         IEquatable<StationViewModel>, IComparable<StationViewModel>
     {
 

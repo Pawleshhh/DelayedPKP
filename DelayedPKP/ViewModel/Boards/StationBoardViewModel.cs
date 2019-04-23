@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace DelayedPKP.ViewModel
 {
-    public class StationBoardViewModel : ObservedClass
+    public class StationBoardViewModel : ObservedClass, IViewModel
     {
 
         #region Constructors
 
-        public StationBoardViewModel() { }
+        public StationBoardViewModel(IViewModel parent) { }
 
         public StationBoardViewModel(string pattern, IEnumerable<StationViewModel> collection)
         {
@@ -38,6 +38,10 @@ namespace DelayedPKP.ViewModel
         public ObservableCollection<StationViewModel> Collection { get; private set; }
 
         public string ProvidedPattern { get; private set; }
+
+        public IViewModel ParentViewModel { get; private set; }
+
+        public ErrorViewModel ErrorViewModel => ParentViewModel.ErrorViewModel ?? null;
 
         #endregion
 

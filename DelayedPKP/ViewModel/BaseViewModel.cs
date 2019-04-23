@@ -39,6 +39,10 @@
             ErrorViewModel = new ErrorViewModel(this);
             ErrorViewModel.ExceptionOccurred += ErrorViewModel_ExceptionOccurred;
             ErrorViewModel.ExceptionHanled += ErrorViewModel_ExceptionHanled;
+
+            StationBoard = new StationBoardViewModel(this);
+            InfoBoard_ByStation = new InfoBoardViewModel<Station>(this);
+            InfoBoard_ByTrain = new InfoBoardViewModel<Train>(this);
         }
 
         #endregion
@@ -69,19 +73,19 @@
         /// Gets stations that have been loaded.
         /// </summary>
         public StationBoardViewModel StationBoard
-        { get; private set; } = new StationBoardViewModel();
+        { get; private set; }
 
         /// <summary>
         /// Gets collection of delay time by station.
         /// </summary>
         public InfoBoardViewModel<Station> InfoBoard_ByStation
-        { get; } = new InfoBoardViewModel<Station>();
+        { get; private set; }
 
         /// <summary>
         /// Gets collection of delay time by train.
         /// </summary>
         public InfoBoardViewModel<Train> InfoBoard_ByTrain
-        { get; } = new InfoBoardViewModel<Train>();
+        { get; private set; }
 
         #endregion
 

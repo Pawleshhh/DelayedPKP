@@ -76,6 +76,23 @@ namespace DelayedPKP.ViewModel
         #region Methods
 
         /// <summary>
+        /// Do a specific action and handle every exception that may occur.
+        /// </summary>
+        /// <param name="action">Delegate with action to do.</param>
+        /// <returns>Returns true if any exception has not been caught, otherwise returns false.</returns>
+        public bool DoAndHandleExceptions(Action action)
+        {
+            try { action(); }
+            catch (Exception ex)
+            {
+                CallException(ex, ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Calls that a new exception occured.
         /// </summary>
         /// <param name="ex">A new exception.</param>
