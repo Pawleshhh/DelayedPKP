@@ -5,7 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DelayedPKP"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        AllowsTransparency="True"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        x:Name="AppWindow"
+        Title="Delayed PKP" Height="450" Width="800">
+
+    <!--#region Window Resources-->
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DelayedPKP;component/Dictionaries/WindowsTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type local:MainWindow}" BasedOn="{StaticResource AppMainWindowStyle}"/>
+
+        </ResourceDictionary>
+    </Window.Resources>
+    <!--#endregion-->
+
+    <!--#region WinChrome-->
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="30" ResizeBorderThickness="10, 6, 10, 6"
+                      GlassFrameThickness="0" CornerRadius="0"/>
+    </WindowChrome.WindowChrome>
+
+    <!--#endregion-->
+
     <Grid>
         
     </Grid>
