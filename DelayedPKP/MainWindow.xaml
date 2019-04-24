@@ -9,7 +9,8 @@
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         x:Name="AppWindow"
-        Title="Delayed PKP" Height="450" Width="800">
+        Title="Delayed PKP" Height="450" Width="800"
+        MinHeight="150" MinWidth="300">
 
     <!--#region Window Resources-->
 
