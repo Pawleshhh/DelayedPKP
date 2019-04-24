@@ -35,6 +35,6 @@
     <!--#endregion-->
 
     <Grid>
-        
+        <Button/>
     </Grid>
 </Window>
