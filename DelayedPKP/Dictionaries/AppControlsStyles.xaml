@@ -1,0 +1,96 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DelayedPKP">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/DelayedPKP;component/Dictionaries/AppBrushes.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--#region App TextBoxes Styles-->
+
+    <!--Brushes for the SearchTextBoxStyle-->
+    <SolidColorBrush x:Key="SearchTextBox.Static.Background" Color="LightSkyBlue"/>
+    <SolidColorBrush x:Key="SearchTextBox.Static.Border" Color="Cyan"/>
+    <SolidColorBrush x:Key="SearchTextBox.Static.Foreground" Color="Violet"/>
+    <SolidColorBrush x:Key="SearchTextBox.Focused.Background" Color="Cyan"/>
+    <SolidColorBrush x:Key="SearchTextBox.Focused.Border" Color="DarkCyan"/>
+    <SolidColorBrush x:Key="SearchTextBox.Focused.Foreground" Color="DarkViolet"/>
+
+    <!--Style for the text box from the search control-->
+    <Style TargetType="{x:Type TextBox}" x:Key="SearchTextBoxStyle">
+        <Setter Property="Background" Value="{StaticResource SearchTextBox.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SearchTextBox.Static.Border}"/>
+        <Setter Property="Foreground" Value="{StaticResource SearchTextBox.Static.Foreground}"/>
+        <Style.Triggers>
+            <!--Changing colors when focused-->
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="{StaticResource SearchTextBox.Focused.Background}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SearchTextBox.Focused.Border}"/>
+                <Setter Property="Foreground" Value="{StaticResource SearchTextBox.Focused.Foreground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!--#endregion-->
+    
+    <!--#region  App Buttons Styles-->
+
+    <!--Brushes for the SearchButtonStyle-->
+    <SolidColorBrush x:Key="SearchButton.Static.Background" Color="LightSkyBlue"/>
+    <SolidColorBrush x:Key="SearchButton.Static.Border" Color="Cyan"/>
+    <SolidColorBrush x:Key="SearchButton.Static.Foreground" Color="Violet"/>
+    <SolidColorBrush x:Key="SearchButton.MouseOver.Background" Color="Cyan"/>
+    <SolidColorBrush x:Key="SearchButton.MouseOver.Border" Color="DarkCyan"/>
+    <SolidColorBrush x:Key="SearchButton.MouseOver.Foreground" Color="DarkViolet"/>
+    <SolidColorBrush x:Key="SearchButton.Pressed.Background" Color="Cyan"/>
+    <SolidColorBrush x:Key="SearchButton.Pressed.Border" Color="DarkCyan"/>
+    <SolidColorBrush x:Key="SearchButton.Pressed.Foreground" Color="DarkViolet"/>
+    <SolidColorBrush x:Key="SearchButton.Disabled.Background" Color="Gray"/>
+    <SolidColorBrush x:Key="SearchButton.Disabled.Border" Color="DarkGray"/>
+    <SolidColorBrush x:Key="SearchButton.Disabled.Foreground" Color="Black"/>
+    
+    <!--Style for the button from the search control style-->
+    <Style TargetType="{x:Type Button}" x:Key="SearchButtonStyle">
+        <Setter Property="Background" Value="{StaticResource SearchButton.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SearchButton.Static.Border}"/>
+        <Setter Property="Foreground" Value="{StaticResource SearchButton.Static.Foreground}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <!--Border of this button-->
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}" SnapsToDevicePixels="true" CornerRadius="5">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--When mouse over-->
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource SearchButton.MouseOver.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource SearchButton.MouseOver.Border}"/>
+                            <Setter Property="TextElement.Foreground" TargetName="border" Value="{StaticResource SearchButton.MouseOver.Foreground}"/>
+                        </Trigger>
+                        <!--When button is pressed-->
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource SearchButton.Pressed.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource SearchButton.Pressed.Border}"/>
+                            <Setter Property="TextElement.Foreground" TargetName="border" Value="{StaticResource SearchButton.Pressed.Foreground}"/>
+                        </Trigger>
+                        <!--When button is not enabled-->
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource SearchButton.Disabled.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource SearchButton.Disabled.Border}"/>
+                            <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource SearchButton.Disabled.Foreground}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers> 
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>    
+    </Style>
+    
+    <!--#endregion-->
+    
+</ResourceDictionary>
