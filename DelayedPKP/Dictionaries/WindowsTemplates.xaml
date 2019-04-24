@@ -58,7 +58,7 @@
     <!--Base style for the window buttons-->
     <Style TargetType="{x:Type Button}" x:Key="WindowButtonsBaseStyle">
         <!--Control size-->
-        <Setter Property="Width" Value="45"/>
+        <!--<Setter Property="Width" Value="45"/>-->
         <Setter Property="BorderThickness" Value="0"/>
         <!--Border-->
         <Setter Property="BorderBrush" Value="{StaticResource WindowButton.Static.Border}"/>
@@ -251,7 +251,6 @@
     
     <!--#region  App window template-->
 
-
     <Style TargetType="{x:Type local:MainWindow}" x:Key="AppMainWindowStyle">
         <Setter Property="Template">
             <Setter.Value>
@@ -296,8 +295,8 @@
                                         </Grid.Resources>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="75"/>
-                                            <ColumnDefinition Width="8*"/>
-                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="135"/>
                                         </Grid.ColumnDefinitions>
 
                                         <!--Icon-->
@@ -308,26 +307,32 @@
                                                    Style="{StaticResource WindowTitleTextBlockStyle}"/>
 
                                         <!--Buttons-->
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Button x:Name="MinimizeButton" Content="_"
+                                        <Grid Grid.Column="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <Button x:Name="MinimizeButton" Content="_" Grid.Column="0"
                                                     Style="{DynamicResource WindowMinimizeButtonStyle}">
                                                 <i:Interaction.Behaviors>
                                                     <local:WindowStateBehavior WindowButtonRole="Minimize"/>
                                                 </i:Interaction.Behaviors>
                                             </Button>
-                                            <Button x:Name="MaximizeButton" Content="[]" 
+                                            <Button x:Name="MaximizeButton" Content="[]" Grid.Column="1"
                                                     Style="{DynamicResource WindowMaximizeButtonStyle}">
                                                 <i:Interaction.Behaviors>
                                                     <local:WindowStateBehavior WindowButtonRole="Maximize"/>
                                                 </i:Interaction.Behaviors>
                                             </Button>
-                                            <Button x:Name="CloseButton" Content="X" 
+                                            <Button x:Name="CloseButton" Content="X" Grid.Column="2"
                                                     Style="{DynamicResource WindowCloseButtonBaseStyle}">
                                                 <i:Interaction.Behaviors>
                                                     <local:WindowStateBehavior WindowButtonRole="Close"/>
                                                 </i:Interaction.Behaviors>
                                             </Button>
-                                        </StackPanel>
+                                        </Grid>
 
                                     </Grid>
                                 </Border>
