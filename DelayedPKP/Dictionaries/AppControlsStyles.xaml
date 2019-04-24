@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DelayedPKP">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/DelayedPKP;component/Dictionaries/AppBrushes.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--#region App TextBoxes Styles-->
+    
+    <!--#endregion-->
+    
+    <!--#region  App Buttons Styles-->
+    
+    <!--#endregion-->
+    
+</ResourceDictionary>
