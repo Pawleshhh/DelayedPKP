@@ -112,5 +112,26 @@ namespace DelayedPKP
 
         #endregion
 
+        #region SearchCommand
+
+        public ICommand SearchCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(SearchCommandProperty);
+            }
+            set
+            {
+                SetValue(SearchCommandProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty SearchCommandProperty
+            = DependencyProperty.Register(
+                "SearchCommand",
+                typeof(ICommand), typeof(SearchControl));
+
+        #endregion
+
     }
 }
