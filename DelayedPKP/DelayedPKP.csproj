@@ -39,7 +39,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HtmlAgilityPack">
-      <HintPath>..\..\..\..\Nauka C#\Console\WebData_Test\packages\HtmlAgilityPack.1.9.0\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <HintPath>..\..\..\Archives\DelayedPKP\DelayedPKP\bin\Debug\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Windows.Shell, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Windows.Shell.3.0.1.0\lib\net40\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
     <Reference Include="PropertyChanged, Version=2.6.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>..\packages\PropertyChanged.Fody.2.6.1\lib\net452\PropertyChanged.dll</HintPath>
@@ -67,6 +70,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\WindowStateBehavior.cs" />
+    <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\Boards\InfoBoardViewModel.cs" />
+    <Compile Include="ViewModel\Boards\StationBoardViewModel.cs" />
+    <Compile Include="ViewModel\Data\DelayInfoViewModel.cs" />
+    <Compile Include="ViewModel\Data\IDelayInfoViewModel.cs" />
+    <Compile Include="ViewModel\Data\IDelayInfoViewModelBase.cs" />
+    <Compile Include="ViewModel\Data\StationViewModel.cs" />
+    <Compile Include="ViewModel\Data\TrainViewModel.cs" />
+    <Compile Include="ViewModel\ErrorViewModel.cs" />
+    <Compile Include="ViewModel\Helper classes\ObservedClass.cs" />
+    <Compile Include="ViewModel\Helper classes\RelayCommand.cs" />
+    <Compile Include="ViewModel\IViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -79,6 +95,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Dictionaries\WindowsTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Collection\DelayInfoCollection.cs" />
@@ -123,13 +143,10 @@
     <Resource Include="Images\Icons\loupe_1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Behaviors\" />
     <Folder Include="Custom controls\" />
     <Folder Include="Fonts\" />
     <Folder Include="Pages\" />
-    <Folder Include="Resource dictionaries\" />
     <Folder Include="Value Converters\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
