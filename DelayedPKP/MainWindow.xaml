@@ -35,6 +35,15 @@
     <!--#endregion-->
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
         <local:SearchControl IconSource="/DelayedPKP;component/Images/Icons/loupe_1.png"/>
     </Grid>
 </Window>

@@ -7,6 +7,10 @@ using System.Windows.Controls;
 
 namespace DelayedPKP
 {
+
+    /// <summary>
+    /// Interface for the controls that are connected with a frame.
+    /// </summary>
     public interface IConnectedWithFrame
     {
 
