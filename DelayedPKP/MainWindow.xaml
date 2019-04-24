@@ -35,6 +35,6 @@
     <!--#endregion-->
 
     <Grid>
-        
+        <local:SearchControl IconSource="/DelayedPKP;component/Images/Icons/loupe_1.png"/>
     </Grid>
 </Window>

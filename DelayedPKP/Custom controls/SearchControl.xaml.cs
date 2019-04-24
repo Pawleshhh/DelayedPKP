@@ -53,29 +53,29 @@ namespace DelayedPKP
             if (searchControl == null)
                 throw new ArgumentException("Dependency object is not a type of SearchControl", "d");
 
-            ((SearchControlViewModel)searchControl.DataContext).Text = (string)e.NewValue;
+            searchControl.StationNameTextBox.Text = (string)e.NewValue;
         }
 
         #endregion
 
         #region IconPathProperty
 
-        public string IconPath
+        public ImageSource IconSource
         {
             get
             {
-                return (string)GetValue(IconPathProperty);
+                return (ImageSource)GetValue(IconSourceProperty);
             }
             set
             {
-                SetValue(IconPathProperty, value);
+                SetValue(IconSourceProperty, value);
             }
         }
 
-        public static readonly DependencyProperty IconPathProperty
+        public static readonly DependencyProperty IconSourceProperty
             = DependencyProperty.Register(
-                  "IconPath",
-                  typeof(string),
+                  "IconSource",
+                  typeof(ImageSource),
                   typeof(SearchControl),
                   new PropertyMetadata(ImageSourceChanged));
 
@@ -85,7 +85,7 @@ namespace DelayedPKP
             if (searchControl == null)
                 throw new ArgumentException("Dependency object is not a type of SearchControl", "d");
 
-            ((SearchControlViewModel)searchControl.DataContext).IconPath = (string)e.NewValue;
+            searchControl.ImageIconControl.Source = (ImageSource)e.NewValue;
         }
 
         #endregion
@@ -108,18 +108,7 @@ namespace DelayedPKP
             = DependencyProperty.Register(
                   "Frame",
                   typeof(Frame),
-                  typeof(SearchControl),
-                  new PropertyMetadata(FrameChanged));
-
-        private static void FrameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            SearchControl searchControl = d as SearchControl;
-            if (searchControl == null)
-                throw new ArgumentException("Dependency object is not a type of SearchControl", "d");
-
-            //((SearchControlViewModel)searchControl.DataContext).Text = (string)e.NewValue;
-        }
-
+                  typeof(SearchControl));
 
         #endregion
 
