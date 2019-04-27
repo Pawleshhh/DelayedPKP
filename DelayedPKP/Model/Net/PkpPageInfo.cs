@@ -100,7 +100,7 @@ namespace DelayedPKP.Model
             //Create an instance of HtmlWeb to set AutoDetectEncoding as true
             var web = new HtmlWeb()
             {
-                AutoDetectEncoding = true
+                AutoDetectEncoding = true,
             };
 
             //Load HTML document from the given URI.

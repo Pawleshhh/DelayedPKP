@@ -56,9 +56,9 @@ namespace DelayedPKP.Model
         /// Gets collection of the stations.
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="NodeNotFoundException"/>
-        /// <exception cref="NodeAttributeNotFoundException"/>
-        /// <exception cref="ArgumentOutOfRangeException"/>
+        /// <exception cref="DataNotFoundException"/>
+        /// <exception cref="WrongDataProvidedException"/>>
+        /// <exception cref="WebException"/>
         public IEnumerable<Station> GetStations()
         {
             return GetStations(DefaultStation);
@@ -69,165 +69,201 @@ namespace DelayedPKP.Model
         /// </summary>
         /// <param name="station">Wanted station.</param>
         /// <returns></returns>
-        /// <exception cref="NodeNotFoundException"/>
-        /// <exception cref="NodeAttributeNotFoundException"/>
-        /// <exception cref="ArgumentOutOfRangeException"/>
+        /// <exception cref="DataNotFoundException"/>
+        /// <exception cref="WrongDataProvidedException"/>>
         /// <exception cref="WebException"/>
         /// <exception cref="ArgumentException"/>
         public IEnumerable<Station> GetStations(string station)
         {
-            //Get html document of the stations
-            var doc = PkpPageInfo.GetHtmlDocumentOfStations(station);
-
-            //Get table with all found stations
-            HtmlNode table = GetTable(doc.DocumentNode);
-
-            //Check if table is null or not
-            if (table == null)
-                throw new NodeNotFoundException("Table was not found");
-
-            //Get all rows from the table
-            foreach (HtmlNode row in table.SelectNodes("tr")
-                ?? throw new NodeNotFoundException("Rows were not found"))
+            try
             {
+                //Get html document of the stations
+                var doc = PkpPageInfo.GetHtmlDocumentOfStations(station);
 
-                //Get all cells from the current row
-                foreach (HtmlNode cell in row.SelectNodes("td") 
-                    ?? throw new NodeNotFoundException("Cells were not found"))
+                //Get table with all found stations
+                var table = GetTable(doc.DocumentNode);
+
+                //Collection with stations to return
+                List<Station> coll_stations = new List<Station>();
+
+                //Get all rows from the table
+                foreach (HtmlNode row in table.SelectNodes("tr")
+                    ?? throw new NodeNotFoundException("Rows were not found"))
                 {
-                    //Remove unnecessary white spaces.
-                    string trimed = cell.InnerText.Trim();
-                    
-                    //Get value from onlick attribute
-                    string id = cell.GetAttributeValue("onclick", "Not found");
 
-                    //If it's not found then throw the exception
-                    if (id == "Not found") throw new NodeAttributeNotFoundException("Onclick was not found");
+                    //Get all cells from the current row
+                    foreach (HtmlNode cell in row.SelectNodes("td")
+                        ?? throw new NodeNotFoundException("Cells were not found"))
+                    {
+                        //Remove unnecessary white spaces.
+                        string trimed = cell.InnerText.Trim();
 
-                    //Get the train id from the value
-                    id = id.Substring(id.IndexOf("id=") + 3);
+                        //Get value from onlick attribute
+                        string id = cell.GetAttributeValue("onclick", "Not found");
 
-                    //return station
-                    yield return new Station(trimed, id);
+                        //If it's not found then throw the exception
+                        if (id == "Not found") throw new NodeAttributeNotFoundException("Onclick was not found");
+
+                        //Get the train id from the value
+                        id = id.Substring(id.IndexOf("id=") + 3);
+
+                        //add station to the collection
+                        coll_stations.Add(new Station(trimed, id));
+                    }
                 }
+
+                return coll_stations;
+            }
+            catch (ArgumentException ex) //It occurs when the station has not been found
+            {
+                throw new WrongDataProvidedException("The station name was not found", ex);
+            }
+            catch (Exception ex) //Other exceptions are expected and about not finding data
+            {
+                //So check the thrown exception if it's a type of any those ones 
+                if (ex is NodeNotFoundException || ex is NodeAttributeNotFoundException || ex is ArgumentOutOfRangeException)
+                    throw new DataNotFoundException(ex); //and throw it
+
+                throw ex;
             }
         }
 
         /// <summary>
         /// Gets <see cref="DelayInfoCollection{TBy, TData}"/> in regard of the given station
         /// </summary>
-        /// <exception cref="NodeNotFoundException"/>
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        /// <exception cref="ArgumentException"/>
-        /// <exception cref="ArgumentNullException"/>
-        /// <exception cref="RegexMatchTimeoutException"/>
-        /// <exception cref="FormatException"/>
-        /// <exception cref="OverflowException"/>
+        /// <exception cref="DataNotFoundException"/>
         /// <exception cref="WebException"/>
         public DelayInfoCollection<Station, IDelayInfo<Station>> GetStationDelayInfos(Station station)
         {
-            //get html document of the trains by the given station with their delay time.
-            var doc = PkpPageInfo.GetHtmlDocumentOfDelayedTrains(station.StationID);
-
-            //get table that contains trains with delay time.
-            HtmlNodeCollection tables = GetMultipleTables(doc.DocumentNode);
-
-            //Helper variables
-            string trainName = string.Empty, id = string.Empty, host = string.Empty, from = string.Empty, destination = string.Empty;
-            DateTime date = default;
-            TimeSpan? planned = default, delay = null;
-
-            Action<HtmlNodeCollection> setVariables = cells =>
+            try
             {
-                //Set helper variables with relevant data
-                id = GetIDFromHtmlNode(cells[0]);
-                trainName = ClearInnerText(cells[0].InnerText);
-                host = ClearInnerText(cells[1].InnerText);
-                date = GetDateTimeFromText(cells[2].InnerText, "yyyy-M-d");
-                from = GetRelationsFromText(cells[3].InnerText, out destination);
-                TryGetPlannedTimeFromText(cells[4].InnerText, out planned);
-                TryGetDelayTimeFromText(cells[5].InnerText, out delay);
-            };
+                //get html document of the trains by the given station with their delay time.
+                var doc = PkpPageInfo.GetHtmlDocumentOfDelayedTrains(station.StationID);
 
-            //Make function to get arrival data
-            Func<HtmlNodeCollection, IDelayInfo<Station>> setArrivalData = cells =>
+                //get table that contains trains with delay time.
+                var tables = GetMultipleTables(doc.DocumentNode);
+
+                //Helper variables
+                string trainName = string.Empty, id = string.Empty, host = string.Empty, from = string.Empty, destination = string.Empty;
+                DateTime date = default;
+                TimeSpan? planned = default, delay = null;
+
+                Action<HtmlNodeCollection> setVariables = cells =>
+                {
+                    //Set helper variables with relevant data
+                    id = GetIDFromHtmlNode(cells[0]);
+                    trainName = ClearInnerText(cells[0].InnerText);
+                    host = ClearInnerText(cells[1].InnerText);
+                    date = GetDateTimeFromText(cells[2].InnerText, "yyyy-M-d");
+                    from = GetRelationsFromText(cells[3].InnerText, out destination);
+                    TryGetPlannedTimeFromText(cells[4].InnerText, out planned);
+                    TryGetDelayTimeFromText(cells[5].InnerText, out delay);
+                };
+
+                //Make function to get arrival data
+                Func<HtmlNodeCollection, IDelayInfo<Station>> setArrivalData = cells =>
+                {
+                    //Set helper variables with relevant data
+                    setVariables(cells);
+
+                    //Return delay info by given variables
+                    return DelayInfo<Station>.GetSingleDelayInfo(station, new Train(trainName, id, host), station, from, destination, date, planned, delay, default, default);
+                };
+
+                //Make function to get departure data
+                Func<HtmlNodeCollection, IDelayInfo<Station>> setDepartureData = cells =>
+                {
+                    //Set helper variables with relevant data
+                    setVariables(cells);
+
+                    //Return delay info by given variables
+                    return DelayInfo<Station>.GetSingleDelayInfo(station, new Train(trainName, id, host), station, from, destination, date, default, default, planned, delay);
+                };
+
+                //Get the arrival data
+                IEnumerable<IDelayInfo<Station>> arrivalColl = GetDelayInfosFromTable(tables[0], setArrivalData);
+
+                //Get the departure data
+                IEnumerable<IDelayInfo<Station>> departureColl = GetDelayInfosFromTable(tables[1], setDepartureData);
+
+                //return arrival data and departure data as one collection
+                return new DelayInfoCollection<Station, IDelayInfo<Station>>(station, CompleteStationDelayInfo(arrivalColl, departureColl));
+            }
+            catch(ArgumentException ex)
             {
-                //Set helper variables with relevant data
-                setVariables(cells);
-
-                //Return delay info by given variables
-                return DelayInfo<Station>.GetSingleDelayInfo(station, new Train(trainName, id, host), station, from, destination, date, planned, delay, default, default);
-            };
-
-            //Make function to get departure data
-            Func<HtmlNodeCollection, IDelayInfo<Station>> setDepartureData = cells =>
+                throw new DataNotFoundException("Station was not found", ex);
+            }
+            catch (Exception ex) //Other exceptions are expected and about not finding data
             {
-                //Set helper variables with relevant data
-                setVariables(cells);
+                //So check the thrown exception if it's a type of any those ones 
+                if (ex is NodeNotFoundException || ex is ArgumentOutOfRangeException
+                    || ex is ArgumentNullException || ex is FormatException || ex is RegexMatchTimeoutException)
+                    throw new DataNotFoundException(ex); //and throw it
 
-                //Return delay info by given variables
-                return DelayInfo<Station>.GetSingleDelayInfo(station, new Train(trainName, id, host), station, from, destination, date, default, default, planned, delay);
-            };
-
-            //Get the arrival data
-            IEnumerable<IDelayInfo<Station>> arrivalColl = GetDelayInfosFromTable(tables[0], setArrivalData);
-
-            //Get the departure data
-            IEnumerable<IDelayInfo<Station>> departureColl = GetDelayInfosFromTable(tables[1], setDepartureData);
-
-            //return arrival data and departure data as one collection
-            return new DelayInfoCollection<Station, IDelayInfo<Station>>(station, CompleteStationDelayInfo(arrivalColl, departureColl));
+                throw ex;
+            }
         }
 
         /// <summary>
         /// Gets <see cref="DelayInfoCollection{TBy, TData}"/> in regard of the given train.
         /// </summary>
-        /// <exception cref="ArgumentException"/>
-        /// <exception cref="ArgumentNullException"/>
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        /// <exception cref="FormatException"/>
-        /// <exception cref="RegexMatchTimeoutException"/>
-        /// <exception cref="NodeNotFoundException"/>
+        /// <exception cref="DataNotFoundException"/>
         /// <exception cref="WebException"/>
         public DelayInfoCollection<Train, IDelayInfo<Train>> GetTrainDelayInfos(Train train)
         {
-            //get html document of the trains with their delay time.
-            var doc = PkpPageInfo.GetHtmlDocumentOfTrainPage(train.ID);
-
-            //get table that contains delay time of the given train.
-            HtmlNode table = GetTable(doc.DocumentNode);
-
-            //Helper variables
-            string stationName, stationID, from, destination;
-            DateTime date;
-            TimeSpan? plannedArrival, plannedDeparture, arrivalDelay, departureDelay;
-
-            //Make function that will set data from the table.
-            Func<HtmlNodeCollection, IDelayInfo<Train>> setData = cells =>
+            try
             {
-                //Set helper variables with relevant data
-                stationName = ClearInnerText(cells[3].InnerText);
-                stationID = GetIDFromHtmlNode(cells[3]);
+                //get html document of the trains with their delay time.
+                var doc = PkpPageInfo.GetHtmlDocumentOfTrainPage(train.ID);
 
-                date = GetDateTimeFromText(cells[1].InnerText, "d.M.yyyy");
+                //get table that contains delay time of the given train.
+                HtmlNode table = GetTable(doc.DocumentNode);
 
-                from = GetRelationsFromText(cells[2].InnerText, out destination);
+                //Helper variables
+                string stationName, stationID, from, destination;
+                DateTime date;
+                TimeSpan? plannedArrival, plannedDeparture, arrivalDelay, departureDelay;
 
-                TryGetPlannedTimeFromText(cells[4].InnerText, out plannedArrival);
-                TryGetDelayTimeFromText(cells[5].InnerText, out arrivalDelay);
+                //Make function that will set data from the table.
+                Func<HtmlNodeCollection, IDelayInfo<Train>> setData = cells =>
+                {
+                    //Set helper variables with relevant data
+                    stationName = ClearInnerText(cells[3].InnerText);
+                    stationID = GetIDFromHtmlNode(cells[3]);
 
-                TryGetPlannedTimeFromText(cells[4].InnerText, out plannedDeparture);
-                TryGetDelayTimeFromText(cells[7].InnerText, out departureDelay);
+                    date = GetDateTimeFromText(cells[1].InnerText, "d.M.yyyy");
 
-                //Return delay info by given variables
-                return DelayInfo<Train>.GetSingleDelayInfo(train, train, new Station(stationName, stationID), from, destination,
-                                          date, plannedArrival, arrivalDelay, plannedDeparture, departureDelay);
-            };
+                    from = GetRelationsFromText(cells[2].InnerText, out destination);
 
-            //Get data from the table
-            IEnumerable<IDelayInfo<Train>> collection = GetDelayInfosFromTable(table, setData);
+                    TryGetPlannedTimeFromText(cells[4].InnerText, out plannedArrival);
+                    TryGetDelayTimeFromText(cells[5].InnerText, out arrivalDelay);
 
-            return new DelayInfoCollection<Train, IDelayInfo<Train>>(train, collection);
+                    TryGetPlannedTimeFromText(cells[4].InnerText, out plannedDeparture);
+                    TryGetDelayTimeFromText(cells[7].InnerText, out departureDelay);
+
+                    //Return delay info by given variables
+                    return DelayInfo<Train>.GetSingleDelayInfo(train, train, new Station(stationName, stationID), from, destination,
+                                              date, plannedArrival, arrivalDelay, plannedDeparture, departureDelay);
+                };
+
+                //Get data from the table
+                IEnumerable<IDelayInfo<Train>> collection = GetDelayInfosFromTable(table, setData);
+
+                return new DelayInfoCollection<Train, IDelayInfo<Train>>(train, collection);
+            }
+            catch(ArgumentException ex)
+            {
+                throw new DataNotFoundException("The train was not found", ex);
+            }
+            catch (Exception ex) //Other exceptions are expected and about not finding data
+            {
+                //So check the thrown exception if it's a type of any those ones 
+                if (ex is NodeNotFoundException || ex is ArgumentOutOfRangeException
+                    || ex is ArgumentNullException || ex is FormatException || ex is RegexMatchTimeoutException)
+                    throw new DataNotFoundException(ex); //and throw it
+
+                throw ex;
+            }
         }
 
         #region Getting DelayInfo - helper methods
