@@ -87,6 +87,8 @@
     <Compile Include="Model\Data\IDelayInfoBase.cs" />
     <Compile Include="Model\Data\Station.cs" />
     <Compile Include="Model\Data\Train.cs" />
+    <Compile Include="Model\Exceptions\DataNotFoundException.cs" />
+    <Compile Include="Model\Exceptions\WrongDataProvidedException.cs" />
     <Compile Include="Model\Net\DelayedTrainsPageReader.cs" />
     <Compile Include="Model\Net\PkpPageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
